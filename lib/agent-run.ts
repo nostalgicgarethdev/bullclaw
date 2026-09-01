@@ -1,13 +1,14 @@
 import { generateText, stepCountIs, tool } from "ai";
 import { z } from "zod";
-import { DEFAULT_MODEL, SELF_FUNDED_SOL, SPONSORED_LAUNCHES } from "./config";
+import { DEFAULT_MODEL, LAUNCH_MIN_SOL } from "./config";
+import { platformAddress } from "./keys";
 import { newId } from "./crypto";
 import { collectAgentFees } from "./fees";
 import { jupiterSwapTx, swapQuote, tokenSearch } from "./market";
 import { createOnPump, lockNinetyTen, uploadMetadata } from "./pump";
 import { isPubkey } from "./keys";
 import { solBalance, tokenHoldings } from "./rpc";
-import { agentKeypair, connection, platformKeypair } from "./solana";
+import { agentKeypair, connection } from "./solana";
 import { mutate } from "./store";
 import type { Agent, ChatMessage, SkillId } from "./types";
 import { VersionedTransaction } from "@solana/web3.js";
@@ -32,27 +33,19 @@ async function launchForAgent(
     return { needsConfirm: true, preview: { ...input, split: "90/10" } };
   }
   if (agent.token) return { error: "this agent already launched a token" };
-  const platform = platformKeypair();
-  if (!platform) {
-    return {
-      error:
-        "platform treasury is not configured. Set PLATFORM_SECRET_KEY and fund it with SOL.",
-    };
+  const house = platformAddress();
+  if (!house) {
+    return { error: "house payout address is not configured (PLATFORM_SECRET_KEY)" };
   }
   const symbol = input.symbol.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
   if (symbol.length < 2) return { error: "symbol must be 2-10 chars" };
   const name = input.name.trim().slice(0, 32);
-  const user = await mutate((s) => s.users[agent.userId]);
-  if (!user) return { error: "user missing" };
-  const sponsoredLeft = Math.max(0, SPONSORED_LAUNCHES - user.sponsoredLaunchesUsed);
-  const payer = sponsoredLeft > 0 ? platform : agentKeypair(agent.secretEnc);
-  if (sponsoredLeft <= 0) {
-    const bal = await solBalance(payer.publicKey.toBase58());
-    if (bal < SELF_FUNDED_SOL + 0.02) {
-      return {
-        error: `self-funded launch needs ~${SELF_FUNDED_SOL + 0.02} SOL on the agent wallet ${agent.wallet}`,
-      };
-    }
+  const payer = agentKeypair(agent.secretEnc);
+  const bal = await solBalance(agent.wallet);
+  if (bal < LAUNCH_MIN_SOL) {
+    return {
+      error: `launch needs ~${LAUNCH_MIN_SOL} SOL on the agent wallet ${agent.wallet}. Fund that wallet — nothing is sponsored.`,
+    };
   }
   const meta = await uploadMetadata({
     name,
@@ -73,7 +66,7 @@ async function launchForAgent(
   });
   let shareSig: string | null = null;
   try {
-    shareSig = await lockNinetyTen(created.mint, agent.wallet);
+    shareSig = await lockNinetyTen(created.mint, payer, house);
   } catch (e) {
     shareSig = e instanceof Error ? `share failed: ${e.message}` : "share failed";
   }
@@ -100,14 +93,12 @@ async function launchForAgent(
       pumpFunUrl: token.pumpFunUrl,
       createdAt: token.launchedAt,
     });
-    const u = s.users[agent.userId];
-    if (u && sponsoredLeft > 0) u.sponsoredLaunchesUsed += 1;
   });
   return {
     ...created,
     feeShare: shareSig,
     split: "90% agent / 10% house",
-    sponsored: sponsoredLeft > 0,
+    paidBy: agent.wallet,
     token,
   };
 }
@@ -167,29 +158,25 @@ function toolsFor(agent: Agent) {
       },
     }),
     get_launch_status: tool({
-      description: "Whether this agent can launch, remaining sponsored slots, treasury status",
+      description: "Whether this agent can launch. Agent wallet pays gas. Nothing is sponsored.",
       inputSchema: z.object({}),
       execute: async () => {
-        const platform = platformKeypair();
-        const user = await mutate((s) => s.users[agent.userId]);
-        const used = user?.sponsoredLaunchesUsed ?? 0;
+        const sol = await solBalance(agent.wallet);
         return {
           alreadyLaunched: Boolean(agent.token),
           token: agent.token ?? null,
-          sponsoredRemaining: Math.max(0, SPONSORED_LAUNCHES - used),
-          selfFundedSol: SELF_FUNDED_SOL,
+          launchMinSol: LAUNCH_MIN_SOL,
           agentWallet: agent.wallet,
-          agentSol: await solBalance(agent.wallet),
-          platformConfigured: Boolean(platform),
-          platformAddress: platform?.publicKey.toBase58() ?? null,
-          platformSol: platform ? await solBalance(platform.publicKey.toBase58()) : 0,
+          agentSol: sol,
+          funded: sol >= LAUNCH_MIN_SOL,
+          house: platformAddress(),
           split: "90/10",
         };
       },
     }),
     launch_token: tool({
       description:
-        "Launch a pump.fun token for this agent. First 3 launches per desk are sponsored. confirm=true required. Locks 90% fees to the agent wallet.",
+        "Launch a pump.fun token for this agent. Agent wallet pays rent and gas. confirm=true required. Locks 90% fees to the agent wallet, 10% house.",
       inputSchema: z.object({
         name: z.string(),
         symbol: z.string(),

@@ -12,7 +12,7 @@ export default function DocsPage() {
           </p>
           <ul className="mt-3 space-y-1">
             <li>→ 90% to the agent’s wallet</li>
-            <li>→ 10% to BullClaw (rails, gasless fund, hosting)</li>
+            <li>→ 10% to BullClaw (rails and hosting)</li>
           </ul>
           <p className="mt-3">That is not 65 / 35. The agent is the product. The house is the pipe.</p>
         </section>
@@ -61,8 +61,8 @@ POST /api/mcp`}
         <section>
           <h2 className="display text-2xl font-bold text-[var(--color-ivory)]">Launch</h2>
           <p className="mt-2">
-            First 3 Solana launches per desk are sponsored from the house treasury. After that,
-            self-fund ~0.03 SOL from the agent wallet. One token per agent.
+            The agent wallet pays rent and gas. Nothing is free. Fund that wallet, then launch.
+            One token per agent.
           </p>
         </section>
         <section>

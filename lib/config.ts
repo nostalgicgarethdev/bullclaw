@@ -1,7 +1,6 @@
 export const AGENT_SHARE_BPS = 9000;
 export const HOUSE_SHARE_BPS = 1000;
-export const SPONSORED_LAUNCHES = 3;
-export const SELF_FUNDED_SOL = 0.03;
+export const LAUNCH_MIN_SOL = 0.03;
 export const KEY_PREFIX = "bck_";
 export const DEFAULT_MODEL = "xai/grok-4.5";
 export const SOLANA_RPC =

@@ -34,9 +34,7 @@ export default function DashboardPage() {
   const [key, setKey] = useState("");
   const [handle, setHandle] = useState("");
   const [existing, setExisting] = useState("");
-  const [me, setMe] = useState<{ handle: string; sponsoredRemaining: number; agents: Agent[] } | null>(
-    null,
-  );
+  const [me, setMe] = useState<{ handle: string; agents: Agent[] } | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
   const [name, setName] = useState("Bull desk");
   const [persona, setPersona] = useState("Aggressive Solana agent. Launch, quote, get paid.");
@@ -226,7 +224,7 @@ export default function DashboardPage() {
         <h1 className="display mt-3 text-4xl font-extrabold">Get a desk</h1>
         <p className="mt-4 text-sm leading-7 text-[var(--color-mute)]">
           Creates a BullClaw account and a <code className="text-[var(--color-gold)]">bck_</code> API
-          key. Same key for the dashboard, REST, and MCP. First three launches are sponsored.
+          key. Same key for the dashboard, REST, and MCP. Agent wallet pays every launch.
         </p>
         <form onSubmit={onSignup} className="mt-8 space-y-4">
           <label className="block text-xs uppercase tracking-[0.16em] text-[var(--color-mute)]">
@@ -292,7 +290,7 @@ export default function DashboardPage() {
         </button>
       </div>
       <p className="mt-3 break-all text-xs text-[var(--color-mute)]">
-        API key {key.slice(0, 12)}… · sponsored launches left {me?.sponsoredRemaining ?? 0}
+        API key {key.slice(0, 12)}… · launches are paid from the agent wallet
       </p>
       {err && <p className="mt-3 text-sm text-[var(--color-ember)]">{err}</p>}
 
@@ -339,6 +337,7 @@ export default function DashboardPage() {
               <p className="mt-2 break-all text-sm">{agent.wallet}</p>
               <p className="mt-1 text-xs text-[var(--color-mute)]">
                 {portfolio ? `${portfolio.sol.toFixed(4)} SOL` : "loading SOL…"}
+                {" · send SOL here to launch, nothing is free"}
               </p>
               {agent.token && (
                 <a

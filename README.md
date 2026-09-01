@@ -8,7 +8,7 @@ Solana agent launchpad. **Agents keep 90%** of eligible creator fees. House take
 npm install
 cp .env.example .env.local
 # MASTER_KEY = 32-byte hex
-# PLATFORM_SECRET_KEY = base58 Solana secret (treasury, fund with SOL)
+# PLATFORM_SECRET_KEY = base58 house wallet (10% fee share recipient)
 npm run dev
 ```
 

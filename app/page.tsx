@@ -144,7 +144,7 @@ export default function Home() {
             </h2>
             <ul className="mt-5 space-y-2 text-sm text-[var(--color-mute)]">
               <li>→ API key once. Same key for dashboard, curl, and MCP.</li>
-              <li>→ First three Solana launches are on the house.</li>
+              <li>→ Agent wallet pays the mint. Nothing is sponsored.</li>
               <li>→ MCP connector for Claude, Cursor, Grok, or your own stack.</li>
             </ul>
           </div>

@@ -16,7 +16,7 @@ const TOOLS = [
   { name: "create_agent", description: "Create an agent with a Solana wallet" },
   { name: "chat_with_agent", description: "Send a message to an agent" },
   { name: "get_chat_history", description: "Recent chat for an agent" },
-  { name: "get_launch_status", description: "Launch readiness and sponsored slots" },
+  { name: "get_launch_status", description: "Launch readiness — agent wallet must be funded" },
   { name: "launch_token", description: "Launch on pump.fun with 90/10 fee lock" },
   { name: "get_portfolio", description: "Agent wallet holdings" },
   { name: "get_price", description: "Token search / price" },
@@ -160,11 +160,13 @@ async function callTool(name: string, args: Record<string, unknown>, apiKey: str
     return mutate((s) => (s.messages[agent.id] ?? []).slice(-40));
   }
   if (name === "get_launch_status") {
+    const sol = await solBalance(agent.wallet);
     return {
       token: agent.token ?? null,
       wallet: agent.wallet,
-      sol: await solBalance(agent.wallet),
-      sponsoredRemaining: Math.max(0, 3 - user.sponsoredLaunchesUsed),
+      sol,
+      launchMinSol: 0.03,
+      funded: sol >= 0.03,
     };
   }
   if (name === "launch_token") {

@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 import { PUMP_SDK } from "@pump-fun/pump-sdk";
 import { AGENT_SHARE_BPS, HOUSE_SHARE_BPS } from "./config";
-import { connection, platformKeypair } from "./solana";
+import { connection } from "./solana";
 
 export async function uploadMetadata(params: {
   name: string;
@@ -90,37 +90,40 @@ export async function createOnPump(params: {
   };
 }
 
-export async function lockNinetyTen(mintStr: string, agentWallet: string) {
-  const platform = platformKeypair();
-  if (!platform) throw new Error("PLATFORM_SECRET_KEY missing");
+export async function lockNinetyTen(
+  mintStr: string,
+  creator: Keypair,
+  houseAddress: string,
+) {
   const mint = new PublicKey(mintStr);
+  const house = new PublicKey(houseAddress);
   const ixs = [
     ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 }),
     ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100_000 }),
     await PUMP_SDK.createFeeSharingConfig({
-      creator: platform.publicKey,
+      creator: creator.publicKey,
       mint,
       pool: null,
     }),
     await PUMP_SDK.updateFeeShares({
-      authority: platform.publicKey,
+      authority: creator.publicKey,
       mint,
       currentShareholders: [],
       newShareholders: [
-        { address: new PublicKey(agentWallet), shareBps: AGENT_SHARE_BPS },
-        { address: platform.publicKey, shareBps: HOUSE_SHARE_BPS },
+        { address: creator.publicKey, shareBps: AGENT_SHARE_BPS },
+        { address: house, shareBps: HOUSE_SHARE_BPS },
       ],
     }),
   ];
   const conn = connection();
   const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
   const msg = new TransactionMessage({
-    payerKey: platform.publicKey,
+    payerKey: creator.publicKey,
     recentBlockhash: blockhash,
     instructions: ixs,
   }).compileToV0Message();
   const tx = new VersionedTransaction(msg);
-  tx.sign([platform]);
+  tx.sign([creator]);
   const sig = await conn.sendTransaction(tx, { maxRetries: 3 });
   await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
   return sig;

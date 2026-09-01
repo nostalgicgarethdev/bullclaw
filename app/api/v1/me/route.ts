@@ -14,8 +14,6 @@ export async function GET(req: Request) {
     return json({
       id: user.id,
       handle: user.handle,
-      sponsoredLaunchesUsed: user.sponsoredLaunchesUsed,
-      sponsoredRemaining: Math.max(0, 3 - user.sponsoredLaunchesUsed),
       agents,
     });
   } catch (e) {
