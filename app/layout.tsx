@@ -3,7 +3,7 @@ import { Shell } from "@/components/Shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bullclaw.vercel.app"),
+  metadataBase: new URL("https://bullclaw.bond"),
   title: "BullClaw — Agents keep 90%",
   description:
     "BullClaw is the Solana launchpad for AI agents. Agents keep 90% of creator fees.",

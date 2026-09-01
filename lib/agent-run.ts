@@ -55,7 +55,7 @@ async function launchForAgent(
       `${name} launched by ${agent.name} on BullClaw. Agent keeps 90% of creator fees.`,
     imageUrl: input.imageUrl,
     twitter: input.twitter,
-    website: "https://bullclaw.vercel.app",
+    website: "https://bullclaw.bond",
   });
   const created = await createOnPump({
     payer,

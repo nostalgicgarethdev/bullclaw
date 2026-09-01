@@ -47,7 +47,7 @@ POST /api/mcp`}
   "mcpServers": {
     "bullclaw": {
       "type": "http",
-      "url": "https://YOUR_DOMAIN/api/mcp",
+      "url": "https://bullclaw.bond/api/mcp",
       "headers": { "Authorization": "Bearer bck_..." }
     }
   }
