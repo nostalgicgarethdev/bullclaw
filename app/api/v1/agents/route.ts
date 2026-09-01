@@ -2,7 +2,7 @@ import { agentsFor, publicAgent, requireUser } from "@/lib/auth";
 import { DEFAULT_MODEL, SKILLS } from "@/lib/config";
 import { newId } from "@/lib/crypto";
 import { fail, json, options } from "@/lib/http";
-import { newWallet } from "@/lib/solana";
+import { newWallet } from "@/lib/keys";
 import { mutate } from "@/lib/store";
 import type { SkillId } from "@/lib/types";
 

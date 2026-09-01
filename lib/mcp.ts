@@ -5,7 +5,8 @@ import { collectAgentFees } from "./fees";
 import { swapQuote, tokenSearch } from "./market";
 import { newId } from "./crypto";
 import { DEFAULT_MODEL } from "./config";
-import { platformAddress, solBalance, tokenHoldings, newWallet } from "./solana";
+import { newWallet, platformAddress } from "./keys";
+import { solBalance, tokenHoldings } from "./rpc";
 import { mutate } from "./store";
 import type { SkillId } from "./types";
 

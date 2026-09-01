@@ -1,5 +1,6 @@
 import { json, options } from "@/lib/http";
-import { platformAddress, solBalance } from "@/lib/solana";
+import { platformAddress } from "@/lib/keys";
+import { solBalance } from "@/lib/rpc";
 import { ensureStore } from "@/lib/store";
 
 export const runtime = "nodejs";

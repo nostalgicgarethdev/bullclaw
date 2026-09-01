@@ -1,6 +1,6 @@
 import { ownedAgent, requireUser } from "@/lib/auth";
 import { fail, json, options } from "@/lib/http";
-import { isPubkey } from "@/lib/solana";
+import { isPubkey } from "@/lib/keys";
 import { mutate } from "@/lib/store";
 
 export const runtime = "nodejs";

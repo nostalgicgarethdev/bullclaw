@@ -5,14 +5,9 @@ import { newId } from "./crypto";
 import { collectAgentFees } from "./fees";
 import { jupiterSwapTx, swapQuote, tokenSearch } from "./market";
 import { createOnPump, lockNinetyTen, uploadMetadata } from "./pump";
-import {
-  agentKeypair,
-  connection,
-  isPubkey,
-  platformKeypair,
-  solBalance,
-  tokenHoldings,
-} from "./solana";
+import { isPubkey } from "./keys";
+import { solBalance, tokenHoldings } from "./rpc";
+import { agentKeypair, connection, platformKeypair } from "./solana";
 import { mutate } from "./store";
 import type { Agent, ChatMessage, SkillId } from "./types";
 import { VersionedTransaction } from "@solana/web3.js";
