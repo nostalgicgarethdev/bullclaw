@@ -6,7 +6,7 @@ export const KEY_PREFIX = "bck_";
 export const DEFAULT_MODEL = "xai/grok-4.5";
 export const SOLANA_RPC =
   process.env.SOLANA_RPC_URL?.trim() ||
-  "https://api.mainnet-beta.solana.com";
+  "https://solana-rpc.publicnode.com";
 export const WSOL = "So11111111111111111111111111111111111111112";
 export const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
