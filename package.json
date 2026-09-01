@@ -1,0 +1,30 @@
+{
+  "name": "bullclaw",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev --port 5177",
+    "build": "next build",
+    "start": "next start --port 5177"
+  },
+  "dependencies": {
+    "@ai-sdk/xai": "^2.0.0",
+    "@pump-fun/pump-sdk": "^1.36.0",
+    "@solana/web3.js": "^1.98.4",
+    "@vercel/blob": "^2.0.0",
+    "ai": "^5.0.0",
+    "bs58": "^6.0.0",
+    "next": "^15.5.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.7",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3"
+  }
+}
